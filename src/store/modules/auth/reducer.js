@@ -11,25 +11,41 @@ const initial_state = {
 export default function auth(state = initial_state, action) {
   switch (action.type) {
     case types.LOGIN_REQUEST: {
-      const newState = { ...state };
-      newState.isLoading = true;
-      return newState;
+      return { ...state, isLoading: true };
     }
 
     case types.LOGIN_FAILURE: {
       delete axios.defaults.headers.Authorization;
-      const newState = { ...initial_state };
-      return newState;
+      return { ...initial_state };
     }
 
     case types.LOGIN_SUCCESS: {
-      const newState = { ...state };
-      newState.isLoggedIn = true;
-      newState.token = action.payload.token;
-      newState.user = action.payload.user;
-      newState.isLoading = false;
       axios.defaults.headers.Authorization = `Bearer ${action.payload.token}`;
-      return newState;
+      return {
+        ...state,
+        isLoggedIn: true,
+        token: action.payload.token,
+        user: action.payload.user,
+        isLoading: false
+      };
     }
+
+    case types.REGISTER_REQUEST: {
+      return { ...state, isLoading: true };
+    }
+
+    case types.REGISTER_FAILURE: {
+      return { ...state, isLoading: false };
+    }
+
+    case types.REGISTER_SUCCESS: {
+      return {
+        ...state,
+        isLoading: false
+      }
+    }
+
+    default:
+      return state;
   }
 }

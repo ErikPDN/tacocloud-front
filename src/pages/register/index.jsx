@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Container } from '../../styles/global';
 import { Form } from './styled';
 import * as actions from '../../store/modules/auth/actions';
+
+import Loading from '../../components/loading';
+import history from '../../services/history';
 
 export default function Register() {
   const dispatch = useDispatch();
@@ -13,20 +15,16 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  const isLoading = useSelector((state) => state.auth.isLoading);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (password !== confirmPassword) {
-      toast.error('passwords do not match');
-      return;
-    }
-
-    dispatch(actions.registerRequest({ username, password }));
-    toast.success('Account created successfully');
+    dispatch(actions.registerRequest({ username, password, confirmPassword }));
   };
 
   return (
     <Container>
+      <Loading isLoading={isLoading} />
       <Form onSubmit={handleSubmit}>
         <label htmlFor="username">
           Username:
@@ -35,6 +33,7 @@ export default function Register() {
             id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            autoComplete='off'
             required
           />
         </label>
@@ -62,6 +61,16 @@ export default function Register() {
         </label>
 
         <button type="submit">Criar Conta</button>
+
+        <p style={{ marginTop: '10px', textAlign: 'center' }}>
+          Already have an account?
+          <span
+            onClick={() => history.push('/login')}
+            style={{ cursor: 'pointer', color: '#1a73e8', marginLeft: '5px' }}
+          >
+            Sign in
+          </span>
+        </p>
       </Form>
     </Container>
   );

@@ -5,6 +5,7 @@ import { get } from 'lodash';
 import axios from '../../../services/axios';
 import history from '../../../services/history';
 import * as actions from './actions';
+import * as types from '../types';
 
 function* registerRequest({ payload }) {
   if (!payload) return;
@@ -21,10 +22,19 @@ function* registerRequest({ payload }) {
     toast.error('Password must have between 6 and 50 characters');
   }
 
-  if (formErrors) return;
+  if (payload.password !== payload.confirmPassword) {
+    formErrors = true;
+    toast.error('Passwords do not match');
+  }
+
+  if (formErrors) {
+    yield put(actions.registerFailure());
+    return;
+  }
 
   try {
-    yield call(axios.post, '/register', {
+    console.log('payload', payload);
+    yield call(axios.post, '/auth/register', {
       username: payload.username,
       password: payload.password,
     });
@@ -46,6 +56,33 @@ function* registerRequest({ payload }) {
     }
 
     yield put(actions.registerFailure());
+    toast.error(err.response?.data || 'Erro ao registrar usuário');
   }
 }
+
+function* loginRequest({ payload }) {
+  try {
+    const response = yield call(axios.post, '/auth/login', payload);
+
+    yield put(actions.loginSuccess(response.data));
+    toast.success('Login successful');
+
+    axios.defaults.headers.Authorization = `Bearer ${response.data.token}`;
+    console.log(axios.defaults.headers.Authorization);
+    history.push(payload.prevPath || '/');
+  } catch (err) {
+    toast.error(err);
+    yield put(actions.loginFailure());
+  }
+}
+
+export default all([
+  takeLatest(types.REGISTER_REQUEST, registerRequest),
+  takeLatest(types.LOGIN_REQUEST, loginRequest),
+  takeLatest(types.PERSIST_REHYDRATE, ({ payload }) => {
+    const token = get(payload, 'auth.token', '');
+    if (!token) return;
+    axios.defaults.headers.Authorization = `Bearer ${token}`;
+  }),
+])
 

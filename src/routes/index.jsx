@@ -11,10 +11,10 @@ import Orders from '../pages/orders';
 export default function Routes() {
   return (
     <Switch>
-      <MyRoute path="/login" exact component={Login} />
-      <MyRoute path="/register" exact component={Register} />
-      <MyRoute path="/" exact component={Design} />
-      <MyRoute path="/orders" exact component={Orders} />
+      <MyRoute path="/login" exact component={Login} isClosed={false} />
+      <MyRoute path="/register" exact component={Register} isClosed={false} />
+      <MyRoute path="/" exact component={Design} isClosed />
+      <MyRoute path="/orders" exact component={Orders} isClosed />
       <MyRoute path="*" component={Page404} />
     </Switch>
   );

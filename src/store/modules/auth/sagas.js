@@ -33,7 +33,6 @@ function* registerRequest({ payload }) {
   }
 
   try {
-    console.log('payload', payload);
     yield call(axios.post, '/auth/register', {
       username: payload.username,
       password: payload.password,
@@ -47,11 +46,13 @@ function* registerRequest({ payload }) {
 
     if (status === 409) {
       toast.error('Username already exists');
+      yield put(actions.loginFailure());
       return;
     }
 
     if (status === 400) {
       toast.error('Invalid data');
+      yield put(actions.loginFailure());
       return;
     }
 
@@ -64,14 +65,13 @@ function* loginRequest({ payload }) {
   try {
     const response = yield call(axios.post, '/auth/login', payload);
 
-    yield put(actions.loginSuccess(response.data));
+    yield put(actions.loginSuccess({ ...response.data }));
     toast.success('Login successful');
 
     axios.defaults.headers.Authorization = `Bearer ${response.data.token}`;
-    console.log(axios.defaults.headers.Authorization);
     history.push(payload.prevPath || '/');
   } catch (err) {
-    toast.error(err);
+    toast.error('Invalid username or password');
     yield put(actions.loginFailure());
   }
 }

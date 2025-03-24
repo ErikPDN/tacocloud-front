@@ -45,6 +45,22 @@ export default function auth(state = initial_state, action) {
       }
     }
 
+    case types.UPDATE_USER_REQUEST: {
+      return { ...state, isLoading: true };
+    }
+
+    case types.UPDATE_USER_FAILURE: {
+      return { ...state, isLoading: false };
+    }
+
+    case types.UPDATE_USER_SUCCESS: {
+      return {
+        ...state,
+        user: action.payload,
+        isLoading: false
+      }
+    }
+
     default:
       return state;
   }

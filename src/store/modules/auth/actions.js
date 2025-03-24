@@ -41,3 +41,24 @@ export function registerFailure(payload) {
     payload,
   };
 }
+
+export function updateUserRequest(payload) {
+  return {
+    type: types.UPDATE_USER_REQUEST,
+    payload,
+  }
+}
+
+export function updateUserSuccess(payload) {
+  return {
+    type: types.UPDATE_USER_SUCCESS,
+    payload,
+  }
+}
+
+export function updateUserFailure(payload) {
+  return {
+    type: types.UPDATE_USER_FAILURE,
+    payload,
+  }
+}

@@ -57,7 +57,7 @@ function* registerRequest({ payload }) {
     }
 
     yield put(actions.registerFailure());
-    toast.error(err.response?.data || 'Erro ao registrar usuário');
+    toast.error(err.response?.data || 'Error creating account');
   }
 }
 
@@ -76,6 +76,68 @@ function* loginRequest({ payload }) {
   }
 }
 
+function* updateUserRequest({ payload }) {
+  if (!payload) return;
+
+  let formErrors = false;
+
+  const { username, fullName, street, state, zip } = payload;
+
+  if (username.length < 3 || username.length > 255) {
+    toast.error('Username must have between 3 and 255 characters');
+    formErrors = true;
+  }
+
+  if (fullName.length < 6 || fullName.length > 255) {
+    toast.error('Full name must have between 6 and 255 characters');
+    formErrors = true;
+  }
+
+  if (street.length < 3 || street.length > 255) {
+    toast.error('Street must have between 3 and 255 characters');
+    formErrors = true;
+  }
+
+  if (state.length < 2 || state.length > 2) {
+    toast.error('State must have 2 characters');
+    formErrors = true;
+  }
+
+  if (zip.length < 8 || zip.length > 8) {
+    toast.error('Zip must have 8 characters');
+    formErrors = true;
+  }
+
+  if (formErrors) {
+    yield put(actions.updateUserFailure());
+    return;
+  }
+
+  try {
+    const response = yield call(axios.put, '/user/', payload);
+
+    yield put(actions.updateUserSuccess(response.data));
+    toast.success('User updated successfully');
+
+    history.push('/');
+  } catch (err) {
+    const status = get(err, 'response.status', 0);
+    const errors = get(err, 'response.data.errors', []);
+
+    if (status === 400) {
+      if (Array.isArray(errors)) {
+        errors.map((error) => toast.error(error));
+      } else {
+        toast.error(errors);
+      }
+    } else {
+      toast.error('Error updating user');
+    }
+
+    yield put(actions.updateUserFailure());
+  }
+}
+
 export default all([
   takeLatest(types.REGISTER_REQUEST, registerRequest),
   takeLatest(types.LOGIN_REQUEST, loginRequest),
@@ -84,5 +146,6 @@ export default all([
     if (!token) return;
     axios.defaults.headers.Authorization = `Bearer ${token}`;
   }),
+  takeLatest(types.UPDATE_USER_REQUEST, updateUserRequest),
 ])
 

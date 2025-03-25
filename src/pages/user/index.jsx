@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
+import Cleave from 'cleave.js/react';
 import { get } from 'lodash';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
@@ -22,14 +21,14 @@ export default function User() {
   const [state, setState] = useState('');
   const [zip, setZip] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const isLoading = useSelector(state => state.auth.isLoading);
 
   const getUser = useCallback(async () => {
+    if (!id) return;
     try {
-      setIsLoading(true);
       const { data } = await axios.get(`/user/${id}`);
       setUsername(data.username || '');
-      setFullname(data.fullname || '');
+      setFullname(data.fullName || '');
       setStreet(data.street || '');
       setCity(data.city || '');
       setState(data.state || '');
@@ -41,19 +40,20 @@ export default function User() {
       if (status === 400) {
         (Array.isArray(errors) ? errors : [errors]).forEach(error => toast.error(error));
       }
-    } finally {
-      setIsLoading(false);
     }
-  }, []);
+  }, [id]);
 
   useEffect(() => {
-    getUser();
-  }, [getUser]);
+    if (id) {
+      getUser();
+    }
+  }, [id, getUser]);
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
-    dispatch(actions.updateUserRequest({ username, fullName, street, city, state, zip, phoneNumber }));
-  }, [username, fullName, street, city, state, zip, phoneNumber, dispatch]);
+    if (!id) return;
+    dispatch(actions.updateUserRequest({ id, username, fullName, street, city, state, zip, phoneNumber }));
+  }, [id, username, fullName, street, city, state, zip, phoneNumber, dispatch]);
 
   return (
     <Container>
@@ -67,27 +67,15 @@ export default function User() {
         <input type="text" value={state} onChange={e => setState(e.target.value)} placeholder="State" />
         <input type="text" value={zip} onChange={e => setZip(e.target.value)} placeholder="Zip" />
 
-        <PhoneInput
+        <Cleave
           value={phoneNumber}
-          onChange={setPhoneNumber}
-          defaultCountry="BR"
-          international={false}
-          withCountryCallingCode={false}
-          placeholder="Phone Number"
-          inputComponent={(props) => (
-            <input
-              {...props}
-              className="phone-input"
-              style={{
-                height: '40px',
-                width: '100%',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                padding: '0 15px',
-                fontSize: '16px',
-              }}
-            />
-          )}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          options={{
+            numericOnly: true,
+            delimiters: ['(', ') ', '-', ''],
+            blocks: [0, 2, 5, 4],
+          }}
+          placeholder="(99) 99999-9999"
         />
 
         <button type="submit">Save</button>

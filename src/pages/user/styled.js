@@ -19,10 +19,6 @@ export const Form = styled.form`
     }
   }
 
-  .phone-input {
-    margin-bottom: 2px;
-  }
-
   input::placeholder {
     color: #999;
   }

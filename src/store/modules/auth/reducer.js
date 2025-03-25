@@ -54,11 +54,16 @@ export default function auth(state = initial_state, action) {
     }
 
     case types.UPDATE_USER_SUCCESS: {
-      return {
-        ...state,
-        user: action.payload,
-        isLoading: false
-      }
+      const newState = { ...state };
+      newState.user.username = action.payload.username;
+      newState.user.fullName = action.payload.fullName;
+      newState.user.street = action.payload.street;
+      newState.user.city = action.payload.city;
+      newState.user.state = action.payload.state;
+      newState.user.zip = action.payload.zip;
+      newState.user.phoneNumber = action.payload.phoneNumber;
+      newState.isLoading = false;
+      return newState;
     }
 
     default:

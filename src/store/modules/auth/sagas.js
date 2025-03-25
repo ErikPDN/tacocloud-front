@@ -34,8 +34,7 @@ function* registerRequest({ payload }) {
 
   try {
     yield call(axios.post, '/auth/register', {
-      username: payload.username,
-      password: payload.password,
+      username: payload.username, password: payload.password,
     });
 
     toast.success('Account created successfully');
@@ -81,7 +80,7 @@ function* updateUserRequest({ payload }) {
 
   let formErrors = false;
 
-  const { username, fullName, street, state, zip } = payload;
+  const { id, username, fullName, street, state, zip } = payload;
 
   if (username.length < 3 || username.length > 255) {
     toast.error('Username must have between 3 and 255 characters');
@@ -114,12 +113,20 @@ function* updateUserRequest({ payload }) {
   }
 
   try {
-    const response = yield call(axios.put, '/user/', payload);
+    const response = yield call(axios.put, `/user/${id}`, {
+      username: payload.username,
+      fullName: payload.fullName,
+      street: payload.street,
+      city: payload.city,
+      state: payload.state,
+      zip: payload.zip,
+      phoneNumber: payload.phoneNumber,
+    });
 
-    yield put(actions.updateUserSuccess(response.data));
+    yield put(actions.updateUserSuccess({ ...response.data }));
     toast.success('User updated successfully');
 
-    history.push('/');
+    history.push(`/user/${id}/edit`);
   } catch (err) {
     const status = get(err, 'response.status', 0);
     const errors = get(err, 'response.data.errors', []);

@@ -50,7 +50,9 @@ export default function auth(state = initial_state, action) {
     }
 
     case types.UPDATE_USER_FAILURE: {
-      return { ...state, isLoading: false };
+      const newState = { ...state };
+      newState.isLoading = false;
+      return newState;
     }
 
     case types.UPDATE_USER_SUCCESS: {
@@ -64,6 +66,11 @@ export default function auth(state = initial_state, action) {
       newState.user.phoneNumber = action.payload.phoneNumber;
       newState.isLoading = false;
       return newState;
+    }
+
+    case types.LOGOUT: {
+      delete axios.defaults.headers.Authorization;
+      return { ...initial_state };
     }
 
     default:

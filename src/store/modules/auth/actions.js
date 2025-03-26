@@ -62,3 +62,9 @@ export function updateUserFailure(payload) {
     payload,
   }
 }
+
+export function logout() {
+  return {
+    type: types.LOGOUT,
+  };
+}

@@ -79,8 +79,7 @@ function* updateUserRequest({ payload }) {
   if (!payload) return;
 
   let formErrors = false;
-
-  const { id, username, fullName, street, state, zip } = payload;
+  const { id, username, fullName, street, state, zip, city, phoneNumber } = payload;
 
   if (username.length < 3 || username.length > 255) {
     toast.error('Username must have between 3 and 255 characters');
@@ -97,12 +96,12 @@ function* updateUserRequest({ payload }) {
     formErrors = true;
   }
 
-  if (state.length < 2 || state.length > 2) {
+  if (state.length !== 2) {
     toast.error('State must have 2 characters');
     formErrors = true;
   }
 
-  if (zip.length < 8 || zip.length > 8) {
+  if (zip.length !== 8) {
     toast.error('Zip must have 8 characters');
     formErrors = true;
   }
@@ -114,26 +113,36 @@ function* updateUserRequest({ payload }) {
 
   try {
     const response = yield call(axios.put, `/user/${id}`, {
-      username: payload.username,
-      fullName: payload.fullName,
-      street: payload.street,
-      city: payload.city,
-      state: payload.state,
-      zip: payload.zip,
-      phoneNumber: payload.phoneNumber,
+      username,
+      fullName,
+      street,
+      city,
+      state,
+      zip,
+      phoneNumber,
     });
+
+    const currentUsername = get(payload, 'auth.user.username', '');
 
     yield put(actions.updateUserSuccess({ ...response.data }));
     toast.success('User updated successfully');
 
-    history.push(`/user/${id}/edit`);
+    if (username !== currentUsername) {
+      toast.info('Username changed! Logging out...');
+      yield put(actions.logout());
+    } else {
+      history.push(`/user/${id}/edit`);
+    }
   } catch (err) {
     const status = get(err, 'response.status', 0);
     const errors = get(err, 'response.data.errors', []);
+    const message = get(err, 'response.data.message', '');
 
-    if (status === 400) {
+    if (status === 409) {
+      toast.error(message || 'Username already exists');
+    } else if (status === 400) {
       if (Array.isArray(errors)) {
-        errors.map((error) => toast.error(error));
+        errors.forEach((error) => toast.error(error));
       } else {
         toast.error(errors);
       }

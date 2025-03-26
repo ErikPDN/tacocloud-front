@@ -22,6 +22,9 @@ export default function User() {
   const [zip, setZip] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const isLoading = useSelector(state => state.auth.isLoading);
+  const token = useSelector(state => state.auth.token);
+
+  console.log(token);
 
   const getUser = useCallback(async () => {
     if (!id) return;
@@ -60,14 +63,59 @@ export default function User() {
       <Loading isLoading={isLoading} />
       <h1>User</h1>
       <Form onSubmit={handleSubmit}>
-        <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" />
-        <input type="text" value={fullName} onChange={e => setFullname(e.target.value)} placeholder="Fullname" />
-        <input type="text" value={street} onChange={e => setStreet(e.target.value)} placeholder="Street" />
-        <input type="text" value={city} onChange={e => setCity(e.target.value)} placeholder="City" />
-        <input type="text" value={state} onChange={e => setState(e.target.value)} placeholder="State" />
-        <input type="text" value={zip} onChange={e => setZip(e.target.value)} placeholder="Zip" />
+        <input
+          type="text"
+          name="username"
+          id="username"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+          placeholder="Username"
+          autoComplete="off"
+        />
+        <input
+          type="text"
+          name="fullName"
+          id="fullName"
+          value={fullName}
+          onChange={e => setFullname(e.target.value)}
+          placeholder="Fullname"
+        />
+        <input
+          type="text"
+          name="street"
+          id="street"
+          value={street}
+          onChange={e => setStreet(e.target.value)}
+          placeholder="Street"
+        />
+        <input
+          type="text"
+          name="city"
+          id="city"
+          value={city}
+          onChange={e => setCity(e.target.value)}
+          placeholder="City"
+        />
+        <input
+          type="text"
+          name="state"
+          id="state"
+          value={state}
+          onChange={e => setState(e.target.value)}
+          placeholder="State"
+        />
+        <input
+          type="text"
+          name="zip"
+          id="zip"
+          value={zip}
+          onChange={e => setZip(e.target.value)}
+          placeholder="Zip"
+        />
 
         <Cleave
+          name="phoneNumber"
+          id="phoneNumber"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           options={{

@@ -1,11 +1,22 @@
 import axios from 'axios';
+import store from '../store';
+import * as actions from '../store/modules/auth/actions';
 
-
-const instance = axios.create({
+const api = axios.create({
   baseURL: 'http://localhost:8080',
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
-export default instance;
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response ? error.response.status : 0;
+
+    if (status === 400 || status === 401 || status === 403) {
+      store.dispatch(actions.logout());
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export default api;

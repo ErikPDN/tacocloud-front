@@ -21,7 +21,7 @@ export default function MyRoute({ component: Component, isClosed, ...rest }) {
 }
 
 MyRoute.defaultProps = {
-  isClosed: false,
+  isClosed: true,
 }
 
 MyRoute.propTypes = {

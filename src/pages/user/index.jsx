@@ -22,9 +22,7 @@ export default function User() {
   const [zip, setZip] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const isLoading = useSelector(state => state.auth.isLoading);
-  const token = useSelector(state => state.auth.token);
 
-  console.log(token);
 
   const getUser = useCallback(async () => {
     if (!id) return;

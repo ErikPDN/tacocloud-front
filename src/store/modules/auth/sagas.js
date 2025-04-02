@@ -154,6 +154,7 @@ function* updateUserRequest({ payload }) {
   }
 }
 
+
 export default all([
   takeLatest(types.REGISTER_REQUEST, registerRequest),
   takeLatest(types.LOGIN_REQUEST, loginRequest),

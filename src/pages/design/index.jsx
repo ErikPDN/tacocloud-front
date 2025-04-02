@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+
 import { Form, Container } from './styled';
 import Loading from '../../components/loading';
 import IngredientCheckboxGroup from '../../components/ingredients/IngredientCheckboxGroup';
+import * as actions from '../../store/modules/tacos/actions';
 
 export default function Design() {
   const isLoading = useSelector(state => state.auth.isLoading);
@@ -10,13 +12,11 @@ export default function Design() {
   const [imageUrl, setImageUrl] = useState('');
   const [selectedIngredients, setSelectedIngredients] = useState([]);
 
+  const dispach = useDispatch();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({
-      tacoName,
-      imageUrl,
-      ingredients: selectedIngredients,
-    });
+    dispach(actions.createTacoRequest({ tacoName, imageUrl, ingredients: selectedIngredients }));
   }
 
   return (

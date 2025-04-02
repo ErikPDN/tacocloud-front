@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import axios from "../../services/axios";
-
 import { CheckboxContainer, CheckboxLegend, CheckboxGrid, CheckboxLabel, StyledCheckbox, IngredientName } from "./styled";
 
 export default function IngredientCheckboxGroup({ selectedIngredients, setSelectedIngredients }) {
@@ -11,7 +10,7 @@ export default function IngredientCheckboxGroup({ selectedIngredients, setSelect
   useEffect(() => {
     async function fetchIngredients() {
       try {
-        const response = await axios.get("/design");
+        const response = await axios.get("/designTaco");
         setIngredients(response.data);
       } catch (error) {
         toast.error("An error occurred while fetching ingredients");
@@ -20,10 +19,18 @@ export default function IngredientCheckboxGroup({ selectedIngredients, setSelect
     fetchIngredients();
   }, []);
 
-  const handleCheckboxChange = (id) => {
-    setSelectedIngredients((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+  const handleCheckboxChange = (ingredient) => {
+    setSelectedIngredients((prev) => {
+      // Verifica se o ingrediente já está selecionado (pelo id)
+      const isSelected = prev.some(item => item.id === ingredient.id);
+
+      // Se estiver selecionado, remove; caso contrário, adiciona
+      if (isSelected) {
+        return prev.filter(item => item.id !== ingredient.id);
+      } else {
+        return [...prev, ingredient];
+      }
+    });
   };
 
   return (
@@ -35,8 +42,8 @@ export default function IngredientCheckboxGroup({ selectedIngredients, setSelect
             <StyledCheckbox
               type="checkbox"
               value={ingredient.id}
-              checked={selectedIngredients.includes(ingredient.id)}
-              onChange={() => handleCheckboxChange(ingredient.id)}
+              checked={selectedIngredients.some(item => item.id === ingredient.id)}
+              onChange={() => handleCheckboxChange(ingredient)}
             />
             <IngredientName>{ingredient.name}</IngredientName>
           </CheckboxLabel>
@@ -47,6 +54,12 @@ export default function IngredientCheckboxGroup({ selectedIngredients, setSelect
 }
 
 IngredientCheckboxGroup.propTypes = {
-  selectedIngredients: PropTypes.arrayOf(PropTypes.string).isRequired,
+  selectedIngredients: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired
+    })
+  ).isRequired,
   setSelectedIngredients: PropTypes.func.isRequired,
 }

@@ -11,7 +11,7 @@ api.interceptors.response.use(
   (error) => {
     const status = error.response ? error.response.status : 0;
 
-    if (status === 400 || status === 401 || status === 403) {
+    if (status === 400 || status === 401) {
       store.dispatch(actions.logout());
     }
 

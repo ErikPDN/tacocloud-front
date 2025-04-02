@@ -1,7 +1,9 @@
 import { combineReducers } from 'redux';
 
-import auth from './auth/reducer';
+import authReducer from './auth/reducer';
+import tacosReducer from './tacos/reducer';
 
 export default combineReducers({
-  auth
+  auth: authReducer,
+  tacos: tacosReducer,
 });

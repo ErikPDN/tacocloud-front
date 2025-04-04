@@ -20,3 +20,19 @@ export function createTacoFailure(payload) {
     payload,
   }
 }
+
+export const deleteTacoRequest = (id, index) => ({
+  type: types.DELETE_TACO_REQUEST,
+  payload: { id, index }
+});
+
+export const deleteTacoSuccess = (index) => ({
+  type: types.DELETE_TACO_SUCCESS,
+  payload: { index }
+});
+
+export const deleteTacoFailure = (error) => ({
+  type: types.DELETE_TACO_FAILURE,
+  payload: { error }
+});
+

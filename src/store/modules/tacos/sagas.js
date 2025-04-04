@@ -1,12 +1,13 @@
 import { call, put, all, takeLatest } from 'redux-saga/effects';
 import { toast } from 'react-toastify';
+import { get } from 'lodash';
 
 import axios from '../../../services/axios';
 import history from '../../../services/history';
 import * as actions from './actions';
 import * as types from '../types';
 
-function* createTacoRequest({ payload }) {
+function* createTaco({ payload }) {
   if (!payload) return;
 
   let formErrors = false;
@@ -33,7 +34,6 @@ function* createTacoRequest({ payload }) {
   }
 
   try {
-    console.log("Payload sendo enviado:", { tacoName, imageUrl, ingredients });
     yield call(axios.post, '/designTaco', { name: tacoName, url: imageUrl, ingredients });
 
     toast.success('Taco created successfully');
@@ -41,7 +41,6 @@ function* createTacoRequest({ payload }) {
     history.push('/orders');
   } catch (err) {
     const status = err.response?.status || 0;
-    console.log('Tipo da action que será disparada:', types.CREATE_TACO_FAILURE);
     if (status === 400) {
       toast.error('Invalid data');
       yield put(actions.createTacoFailure(err.response?.data || 'Invalid data'));
@@ -53,6 +52,24 @@ function* createTacoRequest({ payload }) {
   }
 }
 
+function* deleteTaco(action) {
+  try {
+    const { id, index } = action.payload;
+    yield call(axios.delete, `/designTaco/taco/${id}`);
+    yield put(actions.deleteTacoSuccess(index));
+    toast.success('Taco deleted successfully');
+  } catch (err) {
+    const status = get(err, 'response.status', 0);
+    if (status === 401) {
+      toast.error('You need to log in again');
+    } else {
+      toast.error('An error occurred');
+    }
+    yield put(actions.deleteTacoFailure(err));
+  }
+}
+
 export default all([
-  takeLatest(types.CREATE_TACO_REQUEST, createTacoRequest),
+  takeLatest(types.CREATE_TACO_REQUEST, createTaco),
+  takeLatest(types.DELETE_TACO_REQUEST, deleteTaco),
 ])

@@ -24,6 +24,28 @@ export default function tacos(state = initial_state, action) {
       return { ...state, isLoading: false, error: action.payload };
     }
 
+    case types.DELETE_TACO_REQUEST:
+      return { ...state, isLoading: true };
+
+    case types.DELETE_TACO_SUCCESS: {
+      const { index } = action.payload;
+      const newTacos = [...state.tacos];
+      newTacos.splice(index, 1);
+      return {
+        ...state,
+        tacos: newTacos,
+        isLoading: false
+      };
+    }
+
+    case types.DELETE_TACO_FAILURE: {
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload.error
+      };
+    }
+
     default: {
       return state;
     }

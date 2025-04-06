@@ -19,7 +19,7 @@ function* createTaco({ payload }) {
   }
 
   if (imageUrl.length < 6 || imageUrl.length > 300) {
-    toast.error('Image URL must have between 3 and 300 characters');
+    toast.error('Image URL must have between 6 and 300 characters');
     formErrors = true;
   }
 
@@ -34,10 +34,9 @@ function* createTaco({ payload }) {
   }
 
   try {
-    yield call(axios.post, '/designTaco', { name: tacoName, url: imageUrl, ingredients });
-
+    const response = yield call(axios.post, '/designTaco/taco', { name: tacoName, url: imageUrl, ingredients });
     toast.success('Taco created successfully');
-    yield put(actions.createTacoSuccess());
+    yield put(actions.createTacoSuccess(response.data));
     history.push('/orders');
   } catch (err) {
     const status = err.response?.status || 0;

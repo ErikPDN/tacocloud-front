@@ -33,7 +33,7 @@ export default function tacos(state = initial_state, action) {
       newTacos.splice(index, 1);
       return {
         ...state,
-        tacos: newTacos,
+        students: newTacos,
         isLoading: false
       };
     }

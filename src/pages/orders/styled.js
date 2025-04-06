@@ -7,6 +7,7 @@ export const NewOrder = styled(Link)`
   justify-content: end;
   padding: 10px 0;
   margin-left: 10px;
+  color: #28a745;
 `
 
 export const OrderContainer = styled.div`
@@ -23,3 +24,13 @@ export const OrderContainer = styled.div`
     border-top: 1px solid #cccccc;
   }
 `
+
+export const TacoPicture = styled.div`
+  img {
+    width: 44px;
+    height: 44px;
+    margin-right: 10px;
+  }
+`
+
+

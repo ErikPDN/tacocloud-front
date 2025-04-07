@@ -56,7 +56,7 @@ export default function Orders() {
 
             {isLoggedIn ? (
               <>
-                <Link to={`/designTaco/${taco.id}/edit`}><FaEdit size={16} style={{ color: '#007bff' }} /></Link>
+                <Link to={`/taco/${taco.id}/edit`}><FaEdit size={16} style={{ color: '#007bff' }} /></Link>
                 <Link onClick={(e) => handleDelete(e, taco.id, index)} to={`/designTaco/${taco.id}/delete`}>
                   <FaWindowClose size={16} />
                 </Link>

@@ -7,6 +7,7 @@ export const CheckboxContainer = styled.fieldset`
   border-radius: 8px;
   padding: 10px;
   background-color: #f9f9f9;
+  margin-bottom: 10px;
 `;
 
 export const CheckboxLegend = styled.legend`

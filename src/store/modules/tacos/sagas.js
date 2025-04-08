@@ -68,7 +68,27 @@ function* deleteTaco(action) {
   }
 }
 
+function* updateTaco({ payload }) {
+  try {
+    const { id, name, url, ingredients } = payload;
+
+    yield call(axios.put, `/designTaco/taco/${id}`, {
+      name,
+      url,
+      ingredients,
+    });
+
+    toast.success('Taco updated successfully!');
+    yield put(actions.updateTacoSuccess({ id, name, url, ingredients }));
+    history.push('/orders');
+  } catch (err) {
+    toast.error('Error updating taco');
+    yield put(actions.updateTacoFailure(err));
+  }
+}
+
 export default all([
   takeLatest(types.CREATE_TACO_REQUEST, createTaco),
   takeLatest(types.DELETE_TACO_REQUEST, deleteTaco),
+  takeLatest(types.UPDATE_TACO_REQUEST, updateTaco),
 ])

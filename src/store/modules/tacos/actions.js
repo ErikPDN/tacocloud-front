@@ -36,3 +36,23 @@ export const deleteTacoFailure = (error) => ({
   payload: { error }
 });
 
+export function updateTacoRequest(payload) {
+  return {
+    type: types.UPDATE_TACO_REQUEST,
+    payload,
+  };
+}
+
+export function updateTacoSuccess(payload) {
+  return {
+    type: types.UPDATE_TACO_SUCCESS,
+    payload,
+  };
+}
+
+export function updateTacoFailure(error) {
+  return {
+    type: types.UPDATE_TACO_FAILURE,
+    payload: error,
+  };
+}
